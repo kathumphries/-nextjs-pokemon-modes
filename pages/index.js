@@ -1,22 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from 'next/head';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from '../styles/Home.module.css';
 
-export default function Home() {
-  const [pokemon, setPokemon] = useState([]);
-  useEffect(() => {
-    async function getPokemon() {
-      const response = await fetch('https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json');
-      // const response = await fetch('https://pokeapi.co/api/v2/pokemon/clefairy/');
-      setPokemon(await response.json());
+export async function getServerSideProps() {
+  const response = await fetch('https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json');
+
+  return {
+    props: {
+      pokemon: await response.json()
     }
+  };
+}
 
-    getPokemon();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+export default function Home({ pokemon }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -33,7 +31,7 @@ export default function Home() {
               </a>
             </Link>
           </div>
-        ))}
+        ))}~
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from '../../styles/Details.module.css';
 
 // export async function getStaticPaths() {
@@ -28,26 +27,16 @@ import styles from '../../styles/Details.module.css';
 //   };
 // }
 
-export default function Details() {
-  const {
-    query: { id }
-  } = useRouter();
+export const getServerSideProps = async ({ params }) => {
+  const response = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`);
 
-  const [pokemon, setPokemon] = useState(null);
-
-  useEffect(() => {
-    async function getPokemon() {
-      const response = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${2}.json`);
-      // const response = await fetch('https://pokeapi.co/api/v2/pokemon/clefairy/');
-      setPokemon(await response.json());
+  return {
+    props: {
+      pokemon: await response.json()
     }
-
-    if (id) {
-      getPokemon();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
-
+  };
+};
+export default function Details({ pokemon }) {
   if (!pokemon) {
     return null;
   }
